@@ -1,0 +1,49 @@
+version: '3.8'
+
+services:
+  gitea:
+    image: moslemasaad/gitea:latest
+    container_name: gitea_app
+    restart: always
+    depends_on:
+      - postgres
+    environment:
+      - USER_UID=1000
+      - USER_GID=1000
+      - DB_TYPE=postgres
+      - DB_HOST=postgres:5432
+      - DB_NAME=gitea
+      - DB_USER=gitea
+      - DB_PASSWD=giteapassword
+      - GITEA__security__INSTALL_LOCK=true
+    ports:
+      - "3000:3000"
+      - "222:22"
+    volumes:
+      - gitea_data:/data
+      - ./gitea/config/app.ini:/data/gitea/conf/app.ini
+
+  postgres:
+    image: postgres:15
+    container_name: gitea_db
+    restart: always
+    environment:
+      - POSTGRES_DB=gitea
+      - POSTGRES_USER=gitea
+      - POSTGRES_PASSWORD=giteapassword
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    ports:
+      - "5432:5432"
+  
+  pgadmin:
+    image: dpage/pgadmin4:latest
+    environment:
+      PGADMIN_DEFAULT_EMAIL: admin@pgadmin.org
+      PGADMIN_DEFAULT_PASSWORD: adminpassword
+    ports:
+      - "8081:80"
+
+volumes:
+  gitea_data:
+  postgres_data:
