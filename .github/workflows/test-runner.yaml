@@ -30,6 +30,7 @@ jobs:
         run: |
           ls 
           cd Gitea-Test-Automation  # Navigate to the correct folder
+          ls
           docker-compose up --build --abort-on-container-exit
 
       - name: Show Logs if Tests Fail
