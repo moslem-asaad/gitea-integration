@@ -31,11 +31,9 @@ jobs:
       - name: Pull Latest Test Image
         run: docker pull moslemasaad/gitea-test-automation
 
-      - name: Run Tests with Docker Compose
+      - name: Run Tests Automation Tests with Docker Compose
         run: |
-          ls 
-          cd Gitea-Test-Automation  # Navigate to the correct folder
-          ls
+          cd Gitea-Test-Automation
           docker-compose up --build --abort-on-container-exit
 
       - name: Show Logs if Tests Fail

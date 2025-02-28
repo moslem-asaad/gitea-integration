@@ -31,21 +31,23 @@ services:
 
   selenium-test-runner:
     image: moslemasaad/gitea-test-automation
-    container_name: test-runner
+    container_name: selenium-test-runner
     depends_on:
       - selenium-hub
+    restart: unless-stopped
     environment:
       - GITEA_API_TOKEN=9829d39ece8b5ad3a7dcf2c8b273b55043ceaca6
       - Password=80517moslem
       - GRID_URL=http://selenium-hub:4444/
-    command: mvn clean test -Dtest=**/seleniumTests/*
+    command: mvn clean test -Dtest=seleniumTests.*
 
   api-test-runner:
     image: moslemasaad/gitea-test-automation
     container_name: api-test-runner
     depends_on:
       - selenium-hub
+    restart: unless-stopped
     environment:
       - GITEA_API_TOKEN=9829d39ece8b5ad3a7dcf2c8b273b55043ceaca6
       - Password=80517moslem
-    command: mvn clean test -Dtest=**/apiTests/*
+    command: mvn clean test -Dtest=apiTests.*
