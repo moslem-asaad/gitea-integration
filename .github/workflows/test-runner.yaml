@@ -1,4 +1,4 @@
-name: Run Selenium & API Tests
+name: Run API & Selenium Tests 
 
 on:
   push:
@@ -7,9 +7,8 @@ on:
     branches: [ main, dev ]
 
 jobs:
-  AutomationTests:
+  api-tests:
     runs-on: ubuntu-latest
-
     steps:
       - name: Checkout Code
         uses: actions/checkout@v3
@@ -31,19 +30,46 @@ jobs:
       - name: Pull Latest Test Image
         run: docker pull moslemasaad/gitea-test-automation
 
-      - name: Run Automation Tests with Docker Compose
+      - name: Run API Tests
         run: |
           cd Gitea-Test-Automation
-          docker-compose up --build --abort-on-container-exit
+          docker-compose up --build api-test-runner
 
-      - name: Show Logs if Tests Fail
-        if: failure()
+      - name: Stop API Containers
         run: |
           cd Gitea-Test-Automation
-          docker logs selenium-test-runner || true
-          docker logs api-test-runner || true
+          docker-compose down
 
-      - name: Stop and Remove Containers
+  selenium-tests:
+    runs-on: ubuntu-latest
+    needs: api-tests
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v3
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v2
+
+      - name: Install Docker Compose
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y docker-compose
+
+      - name: Login to Docker Hub
+        uses: docker/login-action@v2
+        with:
+          username: ${{ secrets.DOCKERHUB_USERNAME }}
+          password: ${{ secrets.DOCKERHUB_TOKEN }}
+
+      - name: Pull Latest Test Image
+        run: docker pull moslemasaad/gitea-test-automation
+
+      - name: Start Selenium Grid & Run Selenium Tests
+        run: |
+          cd Gitea-Test-Automation
+          docker-compose up --build selenium-hub chrome-node firefox-node selenium-test-runner
+
+      - name: Stop Selenium Containers
         run: |
           cd Gitea-Test-Automation
           docker-compose down
