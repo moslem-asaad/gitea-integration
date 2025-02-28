@@ -7,7 +7,7 @@ on:
     branches: [ main, dev ]
 
 jobs:
-  Automation Tests:
+  AutomationTests:
     runs-on: ubuntu-latest
 
     steps:
