@@ -1,4 +1,4 @@
-name: Run API & Selenium Tests 
+name: Run API & Selenium Tests Separately
 
 on:
   push:
@@ -33,7 +33,7 @@ jobs:
       - name: Run API Tests
         run: |
           cd Gitea-Test-Automation
-          docker-compose up --build api-test-runner
+          docker-compose up --exit-code-from api-test-runner api-test-runner
 
       - name: Stop API Containers
         run: |
@@ -67,7 +67,7 @@ jobs:
       - name: Start Selenium Grid & Run Selenium Tests
         run: |
           cd Gitea-Test-Automation
-          docker-compose up --build selenium-hub chrome-node firefox-node selenium-test-runner
+          docker-compose up --exit-code-from selenium-test-runner selenium-hub chrome-node firefox-node selenium-test-runner
 
       - name: Stop Selenium Containers
         run: |
